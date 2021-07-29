@@ -9,8 +9,8 @@ const { kakao } = window;
 const MapContainer = () => {
   const [map, setMap] = useState();
   const [location, setLocation] = useState({
-    latitude: 37.56859,
-    longitude: 126.987162,
+    latitude: 35.489541,
+    longitude: 129.4214483
   });
   const [mapCenter, setMapCenter] = useDebounce();
   const [message, setMessage] = useState("MESSAGE");
@@ -23,9 +23,11 @@ const MapContainer = () => {
     const { latitude, longitude } = location;
     const options = {
       center: new kakao.maps.LatLng(latitude, longitude),
-      level: 3,
+      level: 8,
     };
     setMap(new kakao.maps.Map(container, options));
+
+    postMessage(true, "map_load_complete");
 
     if (window.ReactNativeWebView) {
       // window.ReactNativeWebView.postMessage("from web -> map loaded");
@@ -85,9 +87,9 @@ const MapContainer = () => {
           break;
         case "render_repair_shop_marker":
           const repairShops = get(event, "payload.repairShops");
-          // postMessage(
-          //   `* render repair shop marker: ${JSON.stringify(repairShops)}`
-          // );
+          postMessage(
+            `* render repair shop marker: ${JSON.stringify(repairShops)}`
+          );
           const markers = repairShops.map(createMarker);
 
           renderMarkers(markers);
@@ -194,8 +196,9 @@ const MapContainer = () => {
       <div
         id={"map"}
         style={{
-          width: "100vmax",
-          height: "100vmax",
+          width: "100vw",
+          height: "100vh",
+          userSelect: "none",
         }}
       />
       <div
