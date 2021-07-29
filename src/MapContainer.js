@@ -60,21 +60,34 @@ const MapContainer = () => {
   }, [map]);
 
   useEffect(() => {
+    const geocoder = new kakao.maps.services.Geocoder();
+    const coord = new kakao.maps.LatLng(location.latitude, location.longitude);
+    const addressCallback = function(result, status) {
+      if (status === kakao.maps.services.Status.OK) {
+        postMessage(`${result[0].address.address_name}`, "fetch_get_direction");
+      }
+    };
+
+    geocoder.coord2Address(coord.getLng(), coord.getLat(), addressCallback);
+  }, [location])
+
+  useEffect(() => {
     if (!!map && !!event) {
       const type = get(event, "type");
+
       switch (type) {
         case "move_to":
           const latitude = parseFloat(get(event, "payload.latitude"), 10);
           const longitude = parseFloat(get(event, "payload.longitude"), 10);
           // setMessage(`lat: ${latitude}, lng: ${longitude}`);
           const moveLatLng = new kakao.maps.LatLng(latitude, longitude);
-          map.panTo(moveLatLng);
+          map.panTo(moveLatLng); 
           break;
         case "render_repair_shop_marker":
           const repairShops = get(event, "payload.repairShops");
-          postMessage(
-            `* render repair shop marker: ${JSON.stringify(repairShops)}`
-          );
+          // postMessage(
+          //   `* render repair shop marker: ${JSON.stringify(repairShops)}`
+          // );
           const markers = repairShops.map(createMarker);
 
           renderMarkers(markers);
