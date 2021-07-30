@@ -83,7 +83,7 @@ const MapContainer = () => {
           const longitude = parseFloat(get(event, "payload.longitude"), 10);
           // setMessage(`lat: ${latitude}, lng: ${longitude}`);
           const moveLatLng = new kakao.maps.LatLng(latitude, longitude);
-          map.panTo(moveLatLng); 
+          map.panTo(moveLatLng);
           break;
         case "render_repair_shop_marker":
           const repairShops = get(event, "payload.repairShops");
@@ -127,7 +127,9 @@ const MapContainer = () => {
         data,
       },
     });
-    window.ReactNativeWebView.postMessage(message);
+    if (!!window.ReactNativeWebView) {
+      window.ReactNativeWebView.postMessage(message);
+    }
   };
 
   const renderMarkers = (markers) => {
