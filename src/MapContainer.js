@@ -3,12 +3,14 @@ import { get } from "lodash";
 import activeMarker from "./assets/ic_marker_active.png";
 import inactiveMarker from "./assets/ic_marker_inactive.png";
 import { useDebounce } from "./hooks/useDebounce";
+import actions from "./constants/actions";
 
 const { kakao } = window;
 
 const MapContainer = () => {
   const [map, setMap] = useState();
   const [location, setLocation] = useState({
+    // SK 본사
     latitude: 37.5681138,
     longitude: 126.9805044,
   });
@@ -61,12 +63,13 @@ const MapContainer = () => {
     }
   }, [map]);
 
+  // 현재 위치 위경도로 주소 가져오기
   useEffect(() => {
     const geocoder = new kakao.maps.services.Geocoder();
     const coord = new kakao.maps.LatLng(location.latitude, location.longitude);
     const addressCallback = function(result, status) {
       if (status === kakao.maps.services.Status.OK) {
-        postMessage(`${result[0].address.address_name}`, "fetch_get_direction");
+        postMessage(`${result[0].address.address_name}`, actions.FETCH_GET_DIRECTION);
       }
     };
 
@@ -78,14 +81,15 @@ const MapContainer = () => {
       const type = get(event, "type");
 
       switch (type) {
-        case "move_to":
+        case actions.MOVE_TO:
           const latitude = parseFloat(get(event, "payload.latitude"), 10);
           const longitude = parseFloat(get(event, "payload.longitude"), 10);
           // setMessage(`lat: ${latitude}, lng: ${longitude}`);
           const moveLatLng = new kakao.maps.LatLng(latitude, longitude);
           map.panTo(moveLatLng);
           break;
-        case "render_repair_shop_marker":
+
+        case actions.RENDER_REPAIR_SHOP_MARKER:
           const repairShops = get(event, "payload.repairShops");
           postMessage(
             `* render repair shop marker: ${JSON.stringify(repairShops)}`
@@ -94,6 +98,20 @@ const MapContainer = () => {
 
           renderMarkers(markers);
           break;
+
+        // 현재 위치로 맵위치 이동
+        case actions.FETCH_GET_DIRECTION:
+          const directionLat = parseFloat(get(event, "payload.latitude", 10));
+          const directionLon = parseFloat(get(event, "payload.longitude", 10));
+          const dirLatLng = new kakao.maps.LatLng(directionLat, directionLon);
+
+          map.setCenter(dirLatLng);
+
+          postMessage(`* get direction lat: ${JSON.stringify(directionLat)}`);
+          postMessage(`* get direction lon: ${JSON.stringify(directionLon)}`);
+
+          break;
+
         default:
           break;
       }
@@ -203,22 +221,6 @@ const MapContainer = () => {
           userSelect: "none",
         }}
       />
-      <div
-        style={{
-          position: "absolute",
-          zIndex: 1,
-          bottom: 100,
-        }}
-      >
-        <text
-          style={{
-            fontSize: 10,
-            whiteSpace: "pre-wrap",
-          }}
-        >
-          {message}
-        </text>
-      </div>
     </>
   );
 };
