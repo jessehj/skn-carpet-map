@@ -9,8 +9,8 @@ const { kakao } = window;
 const MapContainer = () => {
   const [map, setMap] = useState();
   const [location, setLocation] = useState({
-    latitude: 35.489541,
-    longitude: 129.4214483
+    latitude: 37.5681138,
+    longitude: 126.9805044,
   });
   const [mapCenter, setMapCenter] = useDebounce();
   const [message, setMessage] = useState("MESSAGE");
