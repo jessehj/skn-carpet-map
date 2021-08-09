@@ -106,6 +106,10 @@ const MapContainer = () => {
           const dirLatLng = new kakao.maps.LatLng(directionLat, directionLon);
 
           map.setCenter(dirLatLng);
+          setLocation({
+            latitude: directionLat,
+            longitude: directionLon
+          });
 
           postMessage(`* get direction lat: ${JSON.stringify(directionLat)}`);
           postMessage(`* get direction lon: ${JSON.stringify(directionLon)}`);
