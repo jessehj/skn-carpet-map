@@ -157,6 +157,8 @@ const MapContainer = () => {
               marker.setImage(activeMarkerImage);
               postMessage(marker.repairShop, "on_repair_shop_click");
             }
+            marker.setImage(activeMarkerImage);
+            postMessage(marker.repairShop, "on_repair_shop_click");
             selectedMarker.current = marker;
           });
         });
