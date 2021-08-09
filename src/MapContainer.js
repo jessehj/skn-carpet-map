@@ -10,9 +10,9 @@ const { kakao } = window;
 const MapContainer = () => {
   const [map, setMap] = useState();
   const [location, setLocation] = useState({
-    // SK 본사
-    latitude: 37.5681138,
-    longitude: 126.9805044,
+    // SK Networks 본사
+    latitude: 37.56862173547067,
+    longitude: 126.98721628060413,
   });
   const [mapCenter, setMapCenter] = useDebounce();
   const [message, setMessage] = useState("MESSAGE");
