@@ -208,12 +208,13 @@ const MapContainer = () => {
   };
 
   const createMarkerImage = (inactive = true) => {
-    const activeSize = new kakao.maps.Size(36, 44);
-    const inactiveSize = new kakao.maps.Size(32, 32);
+    const markerWidth = inactive ? 32 : 36;
+    const markerHeight = inactive ? 32: 44;
+    const size = new kakao.maps.Size(markerWidth, markerHeight);
     const options = { offset: new kakao.maps.Point(16, 16) };
     return new kakao.maps.MarkerImage(
       inactive ? inactiveMarker : activeMarker,
-      inactive ? inactiveSize : activeSize,
+      size,
       options
     );
   };
