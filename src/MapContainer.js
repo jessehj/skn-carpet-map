@@ -78,6 +78,7 @@ const MapContainer = () => {
 
   useEffect(() => {
     if (!!map && !!event) {
+      console.log(event);
       const type = get(event, "type");
 
       switch (type) {
@@ -95,8 +96,12 @@ const MapContainer = () => {
             `* render repair shop marker: ${JSON.stringify(repairShops)}`
           );
           const markers = repairShops.map(createMarker);
+          if (existMarkers) {
+            existMarkers.clear();
+          }
 
-          renderMarkers(markers);
+          renderClusterer(markers);
+          // renderMarkers(markers);
           break;
 
         // 현재 위치로 맵위치 이동
@@ -134,13 +139,14 @@ const MapContainer = () => {
     }
   }, [mapCenter]);
 
-  const handleNativeEvent = useCallback((event) => {
+  const handleNativeEvent = (event) => {
+    console.log(event);
     const dataString = get(event, "data");
     if (!!dataString) {
       const data = JSON.parse(get(event, "data"));
       setEvent(data);
     }
-  }, []);
+  };
 
   const postMessage = (data, type = "message") => {
     const message = JSON.stringify({
@@ -154,6 +160,83 @@ const MapContainer = () => {
     }
   };
 
+  const renderClusterer = (markers) => {
+    const clusterer = new kakao.maps.MarkerClusterer({
+      map: map, // 마커들을 클러스터로 관리하고 표시할 지도 객체
+      averageCenter: true, // 클러스터에 포함된 마커들의 평균 위치를 클러스터 마커 위치로 설정
+      minLevel: 10,
+      calculator: [10, 30, 50, 100],// 클러스터 할 최소 지도 레벨
+      texts: (count) => count,
+      styles: [
+        {
+          background: 'rgba(0, 0, 0, .4)',
+          fontWeight: 'bold',
+          textAlign: 'center',
+          width: '40px',
+          height: '40px',
+          borderRadius: '50%',
+          lineHeight: '41px',
+          color: '#000000',
+        },
+        {
+          background: 'rgba(0, 0, 0, .4)',
+          fontWeight: 'bold',
+          textAlign: 'center',
+          width: '60px',
+          height: '60px',
+          borderRadius: '50%',
+          lineHeight: '61px',
+          color: '#000000',
+        },
+        {
+          background: 'rgba(0, 0, 0, .4)',
+          fontWeight: 'bold',
+          textAlign: 'center',
+          width: '80px',
+          height: '80px',
+          borderRadius: '50%',
+          lineHeight: '81px',
+          color: '#000000',
+        },
+        {
+          background: 'rgba(0, 0, 0, .4)',
+          fontWeight: 'bold',
+          textAlign: 'center',
+          width: '100px',
+          height: '100px',
+          borderRadius: '50%',
+          lineHeight: '101px',
+          color: '#000000',
+        },
+      ]
+    });
+    const activeMarkerImage = createMarkerImage(false);
+    markers.map((marker) => {
+      marker.setMap(map);
+
+      kakao.maps.event.addListener(marker, "click", () => {
+        if (
+            !selectedMarker?.current ||
+            selectedMarker?.current !== marker
+        ) {
+          if (!!selectedMarker?.current) {
+            selectedMarker?.current?.setImage(
+                selectedMarker?.current?.normalImage
+            );
+          }
+          marker.setImage(activeMarkerImage);
+          postMessage(marker.repairShop, "on_repair_shop_click");
+        }
+        marker.setImage(activeMarkerImage);
+        postMessage(marker.repairShop, "on_repair_shop_click");
+        selectedMarker.current = marker;
+      });
+    });
+    clusterer.addMarkers(markers);
+    setExistMarkers(clusterer)
+
+  }
+
   const renderMarkers = (markers) => {
     try {
       if (!!existMarkers) {
@@ -161,6 +244,11 @@ const MapContainer = () => {
           exist.setMap(null);
         });
       }
+      const clusterer = new kakao.maps.MarkerClusterer({
+        map: map, // 마커들을 클러스터로 관리하고 표시할 지도 객체
+        averageCenter: true, // 클러스터에 포함된 마커들의 평균 위치를 클러스터 마커 위치로 설정
+        minLevel: 10 // 클러스터 할 최소 지도 레벨
+      });
       if (!!markers) {
         const activeMarkerImage = createMarkerImage(false);
         markers.map((marker) => {
@@ -194,7 +282,7 @@ const MapContainer = () => {
 
   const createMarker = (repairShop) => {
     const { latitude, longitude } = repairShop;
-    postMessage(`* createMarker: lat: ${latitude} / lng: ${longitude}`);
+    // postMessage(`* createMarker: lat: ${latitude} / lng: ${longitude}`);
     const position = new kakao.maps.LatLng(latitude, longitude);
     const image = createMarkerImage();
     const marker = new kakao.maps.Marker({
