@@ -51,7 +51,7 @@ const MapContainer = () => {
             selectedMarker?.current?.normalImage
           );
         }
-        postMessage(true, "on_map_click");
+        postMessage(true, " click");
       });
       kakao.maps.event.addListener(map, "center_changed", (event) => {
         const latlng = map.getCenter();
@@ -175,7 +175,7 @@ const MapContainer = () => {
           height: '40px',
           borderRadius: '50%',
           lineHeight: '41px',
-          color: '#000000',
+          color: '#ffffff',
         },
         {
           background: 'rgba(0, 0, 0, .4)',
@@ -185,7 +185,7 @@ const MapContainer = () => {
           height: '60px',
           borderRadius: '50%',
           lineHeight: '61px',
-          color: '#000000',
+          color: '#ffffff',
         },
         {
           background: 'rgba(0, 0, 0, .4)',
@@ -195,7 +195,7 @@ const MapContainer = () => {
           height: '80px',
           borderRadius: '50%',
           lineHeight: '81px',
-          color: '#000000',
+          color: '#ffffff',
         },
         {
           background: 'rgba(0, 0, 0, .4)',
@@ -205,7 +205,7 @@ const MapContainer = () => {
           height: '100px',
           borderRadius: '50%',
           lineHeight: '101px',
-          color: '#000000',
+          color: '#ffffff',
         },
       ]
     });
