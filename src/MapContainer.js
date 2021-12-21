@@ -18,6 +18,7 @@ const MapContainer = () => {
   const [message, setMessage] = useState("MESSAGE");
   const [event, setEvent] = useState();
   const [existMarkers, setExistMarkers] = useState();
+  const [locationOverlay, setLocationOverlay] = useState();
   const selectedMarker = useRef();
 
   useEffect(() => {
@@ -139,6 +140,10 @@ const MapContainer = () => {
     }
   }, [mapCenter]);
 
+  useEffect(() => {
+    gps_tracking();
+  },[map, location])
+
   const handleNativeEvent = (event) => {
     const dataString = get(event, "data");
     if (!!dataString) {
@@ -163,8 +168,8 @@ const MapContainer = () => {
     const clusterer = new kakao.maps.MarkerClusterer({
       map: map, // 마커들을 클러스터로 관리하고 표시할 지도 객체
       averageCenter: true, // 클러스터에 포함된 마커들의 평균 위치를 클러스터 마커 위치로 설정
-      minLevel: 9,
-      calculator: [10, 30, 50, 100],// 클러스터 할 최소 지도 레벨
+      minLevel: 9, // 클러스터 할 최소 지도 레벨
+      calculator: [10, 30, 50, 100],
       texts: (count) => count,
       styles: [
         {
@@ -305,6 +310,22 @@ const MapContainer = () => {
       options
     );
   };
+
+  function gps_tracking(){
+    if (location) {
+      let gps_content = '<div><img class="pulse" draggable="false" unselectable="on" src="https://ssl.pstatic.net/static/maps/m/pin_rd.png" alt=""></div>';
+      let currentOverlay = new kakao.maps.CustomOverlay({
+        position: new kakao.maps.LatLng(location.latitude, location.longitude),
+        content: gps_content,
+        map: map
+      });
+      currentOverlay.setMap(map);
+      if(locationOverlay) {
+        locationOverlay.setMap(null);
+      }
+      setLocationOverlay(currentOverlay);
+    }
+  }
 
   return (
     <>
