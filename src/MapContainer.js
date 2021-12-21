@@ -313,7 +313,7 @@ const MapContainer = () => {
 
   function gps_tracking(){
     if (location) {
-      let gps_content = '<div><img class="pulse" draggable="false" unselectable="on" src="https://ssl.pstatic.net/static/maps/m/pin_rd.png" alt=""></div>';
+      let gps_content = '<div><img class="pulse" draggable="false" unselectable="on" src="https://skncpetb2cdimage.blob.core.windows.net/carpet-pro-general/2021-12-21T09:26:25.173Z_apmf6nnr1lh.png" alt=""></div>';
       let currentOverlay = new kakao.maps.CustomOverlay({
         position: new kakao.maps.LatLng(location.latitude, location.longitude),
         content: gps_content,
