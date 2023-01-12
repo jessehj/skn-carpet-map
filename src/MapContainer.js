@@ -1,7 +1,9 @@
-import React, { useCallback, useEffect, useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { get } from "lodash";
 import activeMarker from "./assets/ic_marker_active.png";
 import inactiveMarker from "./assets/ic_marker_inactive.png";
+import startActiveMarker from './assets/ic_marker_start_active.png';
+import startInactiveMarker from './assets/ic_marker_startin_active.png';
 import { useDebounce } from "./hooks/useDebounce";
 import actions from "./constants/actions";
 
@@ -15,7 +17,6 @@ const MapContainer = () => {
     longitude: 126.98721628060413,
   });
   const [mapCenter, setMapCenter] = useDebounce();
-  const [message, setMessage] = useState("MESSAGE");
   const [event, setEvent] = useState();
   const [existMarkers, setExistMarkers] = useState();
   const [locationOverlay, setLocationOverlay] = useState();
@@ -215,7 +216,7 @@ const MapContainer = () => {
       ]
     });
     const activeMarkerImage = createMarkerImage(false);
-    markers.map((marker) => {
+    markers.forEach((marker) => {
       marker.setMap(map);
 
       kakao.maps.event.addListener(marker, "click", () => {
@@ -255,7 +256,7 @@ const MapContainer = () => {
       });
       if (!!markers) {
         const activeMarkerImage = createMarkerImage(false);
-        markers.map((marker) => {
+        markers.forEach((marker) => {
           marker.setMap(map);
 
           kakao.maps.event.addListener(marker, "click", () => {
@@ -288,7 +289,7 @@ const MapContainer = () => {
     const { latitude, longitude } = repairShop;
     // postMessage(`* createMarker: lat: ${latitude} / lng: ${longitude}`);
     const position = new kakao.maps.LatLng(latitude, longitude);
-    const image = createMarkerImage();
+    const image = createMarkerImage(true, repairShop.bookmarked);
     const marker = new kakao.maps.Marker({
       position,
       image,
@@ -299,13 +300,21 @@ const MapContainer = () => {
     return marker;
   };
 
-  const createMarkerImage = (inactive = true) => {
+  const createMarkerImage = (inactive = true, isBooked = false) => {
     const markerWidth = inactive ? 32 : 36;
     const markerHeight = inactive ? 32: 44;
     const size = new kakao.maps.Size(markerWidth, markerHeight);
     const options = { offset: new kakao.maps.Point(16, 16) };
+
+    let image
+    if (inactive) {
+      image = isBooked ? startInactiveMarker : inactiveMarker
+    } else {
+      image = isBooked ? startActiveMarker : activeMarker
+    }
+
     return new kakao.maps.MarkerImage(
-      inactive ? inactiveMarker : activeMarker,
+      image,
       size,
       options
     );
