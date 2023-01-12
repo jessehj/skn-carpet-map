@@ -2,8 +2,8 @@ import React, { useEffect, useRef, useState } from "react";
 import { get } from "lodash";
 import activeMarker from "./assets/ic_marker_active.png";
 import inactiveMarker from "./assets/ic_marker_inactive.png";
-import startActiveMarker from './assets/ic_marker_start_active.png';
-import startInactiveMarker from './assets/ic_marker_startin_active.png';
+import starActiveMarker from './assets/ic_marker_star_active.png';
+import starInactiveMarker from './assets/ic_marker_star_inactive.png';
 import { useDebounce } from "./hooks/useDebounce";
 import actions from "./constants/actions";
 
@@ -308,9 +308,9 @@ const MapContainer = () => {
 
     let image
     if (inactive) {
-      image = isBooked ? startInactiveMarker : inactiveMarker
+      image = isBooked ? starInactiveMarker : inactiveMarker
     } else {
-      image = isBooked ? startActiveMarker : activeMarker
+      image = isBooked ? starActiveMarker : activeMarker
     }
 
     return new kakao.maps.MarkerImage(
